@@ -91,3 +91,9 @@
 [submodule "assets/shaders"]
 	path = assets/shaders
 	url = git@github.com:cpp-toolbox/shaders.git
+[submodule "src/utility/meta_utils"]
+	path = src/utility/meta_utils
+	url = git@github.com:cpp-toolbox/meta_utils.git
+[submodule "src/utility/regex_utils"]
+	path = src/utility/regex_utils
+	url = git@github.com:cpp-toolbox/regex_utils.git
