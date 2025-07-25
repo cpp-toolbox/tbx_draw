@@ -25,10 +25,15 @@ add_dependencies(${PROJECT_NAME} copy_resources)
 # Automatically generated from conan install
 
 # Automatically generated from conan install
+
+# Automatically generated from conan install
+
+# Automatically generated from conan install
 find_package(glfw3)
 find_package(glad)
 find_package(fmt)
 find_package(OpenAL)
 find_package(nlohmann_json)
 find_package(SndFile)
-target_link_libraries(${PROJECT_NAME} glfw glad::glad fmt::fmt OpenAL::OpenAL nlohmann_json::nlohmann_json SndFile::sndfile)
+find_package(glm)
+target_link_libraries(${PROJECT_NAME} glfw glad::glad fmt::fmt OpenAL::OpenAL nlohmann_json::nlohmann_json SndFile::sndfile glm::glm)
