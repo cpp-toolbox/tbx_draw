@@ -5,13 +5,17 @@
 #include "graphics/vertex_geometry/vertex_geometry.hpp"
 
 #include "system_logic/toolbox_engine/toolbox_engine.hpp"
+
 #include "utility/meta_utils/meta_utils.hpp"
+#include "utility/glm_utils/glm_utils.hpp"
+#include "utility/glm_printing/glm_printing.hpp"
 
 // https://chatgpt.com/c/68808a85-ca34-8007-8693-5dd3e7510abf
 // continue working on custom vp file type
 
 int add(int x, int y) { return x + y; }
 int mul(int x, int y) { return x * y; }
+glm::vec3 mul_vec(glm::vec3 v, float c) { return v * c; }
 
 std::optional<std::string> f(const std::string &input) {
     std::regex re(R"(^\s*add\s*\(\s*(-?\d+)\s*,\s*(-?\d+)\s*\)\s*$)");
@@ -26,10 +30,26 @@ std::optional<std::string> f(const std::string &input) {
     return std::to_string(result);
 }
 
+std::optional<std::string> g(const std::string &input) {
+    std::regex re(
+        R"(^\s*mul_vec\s*\(\s*(\s*\(\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*,\s*-?\d+(?:\.\d+)?\s*\)\s*)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)\s*$)");
+    std::smatch match;
+    if (!std::regex_match(input, match, re))
+        return std::nullopt;
+
+    glm::vec3 v = glm_utils::parse_vec3(match[1]);
+    float c = std::stod(match[2]);
+
+    glm::vec3 result = mul_vec(v, c);
+    return vec3_to_string(result);
+}
+
 int main() {
 
     std::cout << generate_invoker("int add(int x, int y)") << std::endl;
+    std::cout << generate_invoker("glm::vec3 mul_vec(glm::vec3 v, float c)") << std::endl;
     std::cout << f("add(8, 3)").value() << std::endl;
+    std::cout << g("mul_vec((1, 2, 3), 2)").value() << std::endl;
 
     std::unordered_map<SoundType, std::string> sound_type_to_file = {
         {SoundType::UI_HOVER, "assets/sounds/hover.wav"}, {SoundType::UI_CLICK, "assets/sounds/click.wav"},

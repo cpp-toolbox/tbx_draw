@@ -97,3 +97,6 @@
 [submodule "src/utility/regex_utils"]
 	path = src/utility/regex_utils
 	url = git@github.com:cpp-toolbox/regex_utils.git
+[submodule "src/utility/glm_utils"]
+	path = src/utility/glm_utils
+	url = git@github.com:cpp-toolbox/glm_utils.git
