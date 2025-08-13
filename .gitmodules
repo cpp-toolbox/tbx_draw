@@ -103,3 +103,6 @@
 [submodule "src/utility/collection_utils"]
 	path = src/utility/collection_utils
 	url = git@github.com:cpp-toolbox/collection_utils.git
+[submodule "src/utility/cpp_parsing"]
+	path = src/utility/cpp_parsing
+	url = git@github.com:cpp-toolbox/cpp_parsing.git

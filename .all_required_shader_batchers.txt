@@ -1,1 +1,2 @@
+transform_v_with_colored_vertex
 absolute_position_with_colored_vertex

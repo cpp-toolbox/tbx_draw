@@ -1,0 +1,1 @@
+transform_v_with_colored_vertex

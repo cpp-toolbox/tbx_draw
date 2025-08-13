@@ -33,6 +33,8 @@ add_dependencies(${PROJECT_NAME} copy_resources)
 # Automatically generated from conan install
 
 # Automatically generated from conan install
+
+# Automatically generated from conan install
 find_package(glfw3)
 find_package(glad)
 find_package(fmt)
