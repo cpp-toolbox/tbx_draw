@@ -16,7 +16,17 @@ add_custom_target(copy_resources ALL
       ${PROJECT_BINARY_DIR}/assets
       COMMENT "Copying resources into binary directory")
 
+
+set(GENERATED_META_PROGRAM_HEADER "${CMAKE_SOURCE_DIR}/src/meta_program/meta_program.hpp")
+
+if(EXISTS "${GENERATED_META_PROGRAM_HEADER}" AND NOT IS_DIRECTORY "${GENERATED_META_PROGRAM_HEADER}")
+    message(STATUS "Found generated meta_program.hpp, enabling GENERATED_META_PROGRAM")
+    target_compile_definitions(${PROJECT_NAME} PRIVATE GENERATED_META_PROGRAM)
+endif()
+
 add_dependencies(${PROJECT_NAME} copy_resources)
+
+# Automatically generated from conan install
 
 # Automatically generated from conan install
 

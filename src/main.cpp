@@ -5,8 +5,9 @@
 #include "graphics/shader_standard/shader_standard.hpp"
 #include "graphics/vertex_geometry/vertex_geometry.hpp"
 
-#include "string_invoker/string_invoker.hpp"
+// #include "string_invoker/string_invoker.hpp"
 
+#include "meta_program/meta_program.hpp"
 #include "system_logic/toolbox_engine/toolbox_engine.hpp"
 
 #include "utility/glm_printing/glm_printing.hpp"
@@ -107,7 +108,6 @@ int main() {
     cpp_parsing::test();
 
     // TODO: we want to automate the meta type construction....
-
     meta_utils::MetaFunctionSignature ivp_constructor("IndexedVertexPositions(std::vector<unsigned int> indices, "
                                                       "std::vector<glm::vec3> xyz_positions, int id = "
                                                       "GlobalUIDGenerator::get_id())",
@@ -161,6 +161,10 @@ int main() {
 
     meta_utils::generate_string_invokers_program_wide({vg_settings, gf_settings});
 
+#ifdef GENERATED_META_PROGRAM
+    meta_program::MetaProgram meta_program(meta_utils::meta_types.get_concrete_types());
+#endif
+
     std::unordered_map<SoundType, std::string> sound_type_to_file = {
         {SoundType::UI_HOVER, "assets/sounds/hover.wav"}, {SoundType::UI_CLICK, "assets/sounds/click.wav"},
         // {SoundType::UI_SUCCESS, "assets/sounds/success.wav"},
@@ -185,9 +189,10 @@ int main() {
 
     std::vector<draw_info::IVPColor> ivpcs;
 
+#ifdef GENERATED_META_PROGRAM
     for (const auto &invocation : invocations) {
         // TODO: turn Ind..Vert.. Pos to snake case I don't like camel beinghere
-        auto result_opt = string_invoker::invoker_that_returns_draw_info_IndexedVertexPositions(invocation);
+        auto result_opt = meta_program.invoker_that_returns_draw_info_IndexedVertexPositions(invocation);
         if (result_opt) {
             const auto &ivp = result_opt.value();
 
@@ -202,6 +207,7 @@ int main() {
             std::cerr << "Failed to invoke: " << invocation << "\n";
         }
     }
+#endif
 
     // TODO instead pass in the resolution?
     tbx_engine.shader_cache.set_uniform(ShaderType::ABSOLUTE_POSITION_WITH_COLORED_VERTEX,
