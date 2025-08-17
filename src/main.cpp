@@ -14,26 +14,15 @@
 #include "utility/glm_utils/glm_utils.hpp"
 #include "utility/meta_utils/meta_utils.hpp"
 #include "utility/regex_utils/regex_utils.hpp"
+#include "utility/text_utils/text_utils.hpp"
 
 #include <fstream>
 #include <string>
 #include <vector>
 #include <iostream>
 
-// TODO: I want to now do spdlog and get that printing out per iteration and then test that outout to generate input
-// for invocations and see how that looks, then can start looking at frag.z
-
-// TODO: next step is to create a program that helps you interactively call functions, how can we do this, well first we
-// want to to select the function we want to call, through fuzzy or interactive way, once we've selected the function,
-// we want to go through its parameters and ask the user to input the parameter, and by the end we have a potential
-// function invocation, this will work fine, but the function invocation might not b evalidly created so having it
-// intcrementally check if the parameters are corect would be best, and if its not correct then we prompt them to go
-// again this would be optimal. also I want to handle default arguments better at some point
-
-// i need a list of all the available meta functions, every string invoker file will have a vector
-
-std::vector<std::string> load_invocations_from_file(const std::string &file_path) {
-    std::vector<std::string> invocations;
+std::vector<std::pair<std::string, std::string>> load_invocations_and_color_from_file(const std::string &file_path) {
+    std::vector<std::pair<std::string, std::string>> invocations;
     std::ifstream file(file_path);
 
     if (!file) {
@@ -45,7 +34,8 @@ std::vector<std::string> load_invocations_from_file(const std::string &file_path
     while (std::getline(file, line)) {
         // Trim whitespace if necessary
         if (!line.empty()) {
-            invocations.push_back(line);
+            auto invocation_color = text_utils::split(line, text_utils::pipe);
+            invocations.push_back({invocation_color.at(0), invocation_color.at(1)});
         }
     }
 
@@ -153,7 +143,9 @@ int main() {
          "glm::vec2 &p1, const glm::vec2 &p2, float thickness) ",
          "draw_info::IndexedVertexPositions generate_circle(const glm::vec3 "
          "center, float radius, unsigned int "
-         "num_sides)"},
+         "num_sides)",
+         "draw_info::IndexedVertexPositions generate_rectangle(float center_x, float center_y, float center_z, float "
+         "width, float height) "},
         meta_utils::FilterMode::Whitelist);
 
     meta_utils::StringInvokerGenerationSettingsForHeaderSource gf_settings(
@@ -185,12 +177,12 @@ int main() {
     tbx_engine.glfw_lambda_callback_manager.set_scroll_callback(scroll_callback);
 
     std::string file_path = "invocations.txt";
-    std::vector<std::string> invocations = load_invocations_from_file(file_path);
+    auto invocations = load_invocations_and_color_from_file(file_path);
 
     std::vector<draw_info::IVPColor> ivpcs;
 
 #ifdef GENERATED_META_PROGRAM
-    for (const auto &invocation : invocations) {
+    for (const auto &[invocation, color] : invocations) {
         // TODO: turn Ind..Vert.. Pos to snake case I don't like camel beinghere
         auto result_opt = meta_program.invoker_that_returns_draw_info_IndexedVertexPositions(invocation);
         if (result_opt) {
@@ -198,7 +190,7 @@ int main() {
 
             // You can assign a color based on index or content of the
             // invocation
-            draw_info::IVPColor colored(ivp, colors::white); // replace color as needed
+            draw_info::IVPColor colored(ivp, glm_utils::parse_vec3(color)); // replace color as needed
 
             colored.id = tbx_engine.batcher.transform_v_with_colored_vertex_shader_batcher.object_id_generator.get_id();
 
